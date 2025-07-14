@@ -1,0 +1,1 @@
+size,bathrooms,year,lot_size,parking,garden,swimming,gym,type_apartment,type_duplex,type_villa,bedrooms_2,bedrooms_3,bedrooms_4,bedrooms_5,location_Ahmedabad,location_Bangalore,location_Chennai,location_Delhi,location_Hyderabad,location_Jaipur,location_Kolkata,location_Mumbai,location_Pune,location_Surat

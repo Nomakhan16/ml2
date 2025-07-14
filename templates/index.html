@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI House Price Predictor</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .header {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    .header p {
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+    .features span {
+      margin: 0 15px;
+      font-weight: 500;
+    }
+    .step-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .form-section {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .form-check-inline {
+  margin-right: 1rem;
+}
+
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .predict-btn {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <div class="header">
+    <h1>🏠 AI House Price Predictor</h1>
+    <p>Get instant, accurate property valuations using advanced machine learning algorithms</p>
+    <div class="features text-white">
+      <span>⚡ XGBoost Algorithm</span>
+      <span>📍 Location Analysis</span>
+      <span>📈 Market Trends</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <form action="/predict" method="POST">
+      <!-- Step 1 -->
+      <div class="form-section">
+        <p class="step-title">📍 Step 1: Select Location</p>
+        <div class="form-group">
+          <label for="location">Location Name</label>
+          <input type="text" class="form-control" id="location" name="location" placeholder="Click on map to select" required>
+          <div id="map"></div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="form-section">
+        <p class="step-title">🏡 Step 2: Property Details</p>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="size">Size (sq ft)</label>
+            <input type="number" class="form-control" id="size" name="size" placeholder="e.g., 2500" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="type">Property Type</label>
+            <select class="form-control" id="type" name="type" required>
+              <option value="">Select type</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Independent House">Independent House</option>
+              <option value="Villa">Villa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="bedrooms">Bedrooms</label>
+            <select class="form-control" id="bedrooms" name="bedrooms" required>
+              <option value="">Select bedrooms</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5+">5+</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="storey">Storey</label>
+            <select id="storey" name="storey" class="form-control" required>
+              <option value="">Select storey</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5+">5+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="year">Year Built</label>
+            <input type="number" class="form-control" id="year" name="year" placeholder="e.g., 2010" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lot_size">Lot Size (sq ft)</label>
+            <input type="number" class="form-control" id="lot_size" name="lot_size" placeholder="e.g., 8000" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Amenities</label><br>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="amenities" value="Garage" id="garage">
+            <label class="form-check-label" for="garage">🚗 Garage</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="amenities" value="Swimming Pool" id="pool">
+            <label class="form-check-label" for="pool"> 🏊‍♂️ Swimming Pool</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="amenities" value="Garden" id="garden">
+            <label class="form-check-label" for="garden">🌳Garden</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="amenities" value="Home Gym" id="gym">
+            <label class="form-check-label" for="gym"> 🏋️‍♂️Home Gym</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn predict-btn btn-block mt-4">Predict Price</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([23.0225, 72.5714], 5); // Default to Ahmedabad
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const marker = L.marker([23.0225, 72.5714], { draggable: true }).addTo(map);
+
+    function updateLocationInput(lat, lng) {
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('location').value = data.display_name || `${lat}, ${lng}`;
+        });
+    }
+
+    map.on('click', function (e) {
+      const { lat, lng } = e.latlng;
+      marker.setLatLng([lat, lng]);
+      updateLocationInput(lat, lng);
+    });
+
+    marker.on('dragend', function (e) {
+      const position = marker.getLatLng();
+      updateLocationInput(position.lat, position.lng);
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
