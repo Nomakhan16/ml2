@@ -40,9 +40,8 @@
       margin-bottom: 30px;
     }
     .form-check-inline {
-  margin-right: 1rem;
-}
-
+      margin-right: 1rem;
+    }
     #map {
       height: 300px;
       width: 100%;
@@ -67,7 +66,7 @@
   </div>
 
   <div class="container">
-    <form action="/predict" method="POST">
+    <form action="/" method="POST">
       <!-- Step 1 -->
       <div class="form-section">
         <p class="step-title">📍 Step 1: Select Location</p>
@@ -89,7 +88,7 @@
           </div>
           <div class="form-group col-md-6">
             <label for="type">Property Type</label>
-            <select class="form-control" id="type" name="type" required>
+            <select class="form-control" id="type" name="property_type" required>
               <option value="">Select type</option>
               <option value="Apartment">Apartment</option>
               <option value="Independent House">Independent House</option>
@@ -126,7 +125,7 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="year">Year Built</label>
-            <input type="number" class="form-control" id="year" name="year" placeholder="e.g., 2010" required>
+            <input type="number" class="form-control" id="year" name="year_built" placeholder="e.g., 2010" required>
           </div>
           <div class="form-group col-md-6">
             <label for="lot_size">Lot Size (sq ft)</label>
@@ -137,19 +136,19 @@
         <div class="form-group">
           <label>Amenities</label><br>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="amenities" value="Garage" id="garage">
+            <input class="form-check-input" type="checkbox" name="garage" value="1" id="garage">
             <label class="form-check-label" for="garage">🚗 Garage</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="amenities" value="Swimming Pool" id="pool">
+            <input class="form-check-input" type="checkbox" name="swimming_pool" value="1" id="pool">
             <label class="form-check-label" for="pool"> 🏊‍♂️ Swimming Pool</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="amenities" value="Garden" id="garden">
+            <input class="form-check-input" type="checkbox" name="garden" value="1" id="garden">
             <label class="form-check-label" for="garden">🌳Garden</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="amenities" value="Home Gym" id="gym">
+            <input class="form-check-input" type="checkbox" name="home_gym" value="1" id="gym">
             <label class="form-check-label" for="gym"> 🏋️‍♂️Home Gym</label>
           </div>
         </div>
@@ -157,6 +156,18 @@
         <button type="submit" class="btn predict-btn btn-block mt-4">Predict Price</button>
       </div>
     </form>
+
+    {% if prediction %}
+      <div class="alert alert-success mt-4">
+        <strong>Predicted Price:</strong> {{ prediction }}
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="alert alert-danger mt-4">
+        ⚠️ {{ error }}
+      </div>
+    {% endif %}
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -190,16 +201,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
