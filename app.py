@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import joblib
+import os
 
 app = Flask(__name__)
 
-# Load model and features
-model = joblib.load("models/model.pkl")
-features = joblib.load("models/features.pkl")
+# Load model and features with full path
+base_dir = os.path.dirname(os.path.abspath(__file__))
+model = joblib.load(os.path.join(base_dir, "models", "model.pkl"))
+features = joblib.load(os.path.join(base_dir, "models", "features.pkl"))
 
 def format_price(price):
     try:
@@ -34,11 +36,8 @@ def index():
             property_type = form.get("property_type", "").strip()
             size = float(form.get("size") or 0)
             bedrooms = int(form.get("bedrooms") or 0)
-
-            # Replacing bathrooms with storey
             storey = form.get("storey", "1")
             storey = 5 if storey == "5+" else int(storey)
-
             year_built = int(form.get("year_built") or 0)
             lot_size = float(form.get("lot_size") or 0)
             garage = 1 if form.get("garage") else 0
@@ -62,7 +61,6 @@ def index():
 
             df = pd.DataFrame([input_dict])
             df_encoded = pd.get_dummies(df).reindex(columns=features, fill_value=0)
-
             price = model.predict(df_encoded)[0]
             prediction = format_price(price)
 
@@ -73,8 +71,15 @@ def index():
 
     return render_template("index.html", prediction=prediction, error=error)
 
+# Optional: Test route to verify app is running
+@app.route("/test")
+def test():
+    return "✅ Flask is running fine!"
+
 if __name__ == "__main__":
-    app.run(debug=True)
+
+port = int(os.environ.get("PORT", 5000))
+app.run(host="0.0.0.0", port=port, debug=True)
 
 
 
